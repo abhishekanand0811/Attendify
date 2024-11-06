@@ -1,0 +1,34 @@
+<div class="flex h-full items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md flex flex-col gap-10">
+        <div class="flex gap-3 flex-col w-full justify-center items-center">
+            <h2 class="flex text-center text-3xl font-bold tracking-tight">
+                OTP Verification 
+            </h2>
+            <h3 class="flex text-center text-xl font-semibold tracking-tight">
+                Enter the 6-digit code sent to your E-Mail.
+            </h3>
+        </div>
+        <form (submit)="submitOtp($event)">
+            <div class="flex flex-col gap-10 justify-center">
+                <div class="flex flex-col flex-wrap gap-3 justify-center items-center">
+                    <div class="flex flex-row flex-wrap gap-3 justify-center items-center">
+                        <div class="flex" *ngFor="let i of [0, 1, 2, 3, 4, 5]; let index = index">
+                          <input type="text" [id]="index" class="w-12 h-12 text-4xl text-center border border-black rounded" [(ngModel)]="otpDigits[index]" [ngModelOptions]="{standalone:true}" (input)="onInputChange(index, $event)" maxlength="1" (keydown)="onKeyDown($event, index)" required autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="flex text-sm">
+                        <p class="flex font-medium text-primary hover:text-primary/90 cursor-pointer group relative" (click)="resendOtp()">
+                            Resend OTP?
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-accent transition-transform transform origin-left scale-x-0 group-hover:scale-x-100"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="flex">
+                    <button type="submit" class="relative flex w-full justify-center rounded-md border border-accent py-2 px-4 text-sm font-medium text-primary-foreground shadow-sm hover:bg-accent/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                        Validate
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

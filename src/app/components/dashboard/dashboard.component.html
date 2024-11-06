@@ -1,0 +1,71 @@
+<div class="flex justify-center p-10 w-full items-center overflow-y-auto" style="max-height: 100vh;">
+    <div class="flex flex-col w-4/5 gap-10">
+        <div class="flex flex-row sm:justify-between justify-center flex-wrap gap-4">
+            <div class="flex text-3xl font-bold">Hi, {{userDetails.name}}</div>
+            <div class="flex">
+                <div class="flex bg-accent text-white rounded-lg p-2 text-xl font-semibold cursor-pointer shadow-sm hover:shadow-2xl select-none" (click)="addSemester()">New Semester</div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-10">
+            <div class="flex w-full justify-center text-2xl text-[#838383] font-semibold" *ngIf="!attendanceSummary?.length">
+                There is no existing attendance available, Click New Semester to add!
+            </div>
+            <div class="flex flex-col gap-5" *ngFor="let year of attendanceSummary">
+                <div class="flex text-2xl font-semibold gap-3 flex-wrap justify-center sm:justify-start">
+                    <p class="flex">Academic Year </p>
+                    <p class="flex">{{year.academicYear}}</p>
+                </div>
+                <div class="flex flex-row gap-5 flex-wrap">
+                    <div class="flex flex-col rounded-lg bg-[#b9b9b9] p-4 cursor-pointer shadow-sm hover:shadow-2xl gap-1 select-none" *ngFor="let sem of year.semestersList" (click)="openAttendance(sem)">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex justify-between">
+                                <div class="flex flex-row gap-3 items-center text-xl">
+                                    <p class="flex font-semibold">Semester:</p>
+                                    <p class="flex">{{sem.semester}}</p>
+                                </div>
+                                <div class="flex" (click)="sideMenu($event, sem, year)">
+                                    <img src="assets/delete-icon-outline.svg" alt="Menu" class="flex h-6 w-6">
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-3 items-center text-xl">
+                                <p class="flex font-semibold">Overall Percentage:</p>
+                                <p class="flex">{{sem.averagePercentage | number: '2.2-2'}}</p>
+                            </div>
+                        </div>
+                        <p class="flex text-xs justify-center">Click to view your attendance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Semester -->
+<div class="flex items-center justify-center fixed top-0 left-0 h-screen w-screen bg-[#00000093] z-50" *ngIf="newSemester">
+    <div class="flex flex-col gap-4 bg-secondary rounded-xl p-5">
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+                <p class="flex text-2xl font-semibold">Add New Semester</p>
+                <img src="assets/menu-close-black.svg" alt="Close" class="flex cursor-pointer" (click)="cancelSemester()">
+            </div>
+            <p class="flex text-sm">Enter the academic year and semester you'd like to add.</p>
+        </div>
+        <form class="flex flex-col gap-7" (submit)="createSemester($event)">
+            <div class="flex flex-row gap-3 w-full items-center justify-between">
+                <label for="academicyear" class="flex text-xl">Academic Year</label>
+                <select name="academicYear" id="academicYear" class="w-52 relative flex rounded-md border border-gray-300 px-3 py-2 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm" [(ngModel)]="selectedAcademicYear">
+                    <option *ngFor="let option of academicYearList" [value]="option">{{option}}</option>
+                </select>
+            </div>
+            <div class="flex flex-row gap-3 w-full items-center justify-between">
+                <label for="semester" class="flex text-xl">Semester</label>
+                <input name="semester" type="number" id="semester" class="w-52 relative flex rounded-md border border-gray-300 px-3 py-2 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm" [(ngModel)]="selectedSemester">
+            </div>
+            <div class="flex">
+                <button type="submit" class="relative flex w-full justify-center rounded-md text-white bg-accent py-2 px-4 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                    Add
+                </button> 
+            </div>
+        </form>
+    </div>
+</div>

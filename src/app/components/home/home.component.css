@@ -1,0 +1,20 @@
+.home-body {
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    height: 88vh;
+    width: 100vw;
+    background-color: #000; /* Background color */
+}
+
+.home-page {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+}
+
+.content-text {
+    color: #fff; /* Adjust text color for better visibility */
+}

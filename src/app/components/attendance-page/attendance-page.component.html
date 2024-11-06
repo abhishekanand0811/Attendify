@@ -1,0 +1,113 @@
+<div class="flex justify-center p-10 w-full items-center" style="max-height: 200vh; overflow-y: auto;">
+    <div class="flex flex-col sm:w-4/5 w-full gap-10">
+        <div class="flex flex-row sm:justify-between justify-center flex-wrap gap-4">
+            <div class="flex text-3xl font-bold">Hi, {{userDetails.name}}</div>
+            <div class="flex flex-col gap-2 justify-center items-center">
+                <input type="date" name="modifiedDate" id="modifiedDate" [(ngModel)]="modifiedDate" (change)="updateModifiedDate($event)" class="flex border bg-none p-2 rounded-lg">
+                <span class="flex text-xs text-slate-500">Change this Date Manually to Keep Track</span>
+            </div>
+        </div>
+        <div class="flex flex-col border-2 rounded-lg p-5 shadow-lg gap-10">
+            <p class="flex text-3xl font-semibold">
+                Attendance Overview
+            </p>
+            <div class="flex sm:flex-row flex-col-reverse gap-16">
+                <div class="flex sm:w-1/2 border-2 rounded-lg p-5 gap-5">
+                    <div class="flex flex-col gap-4 w-full">
+                        <p class="flex text-2xl font-semibold">Subject Wise Performance</p>
+                        <app-chart *ngIf="showChart" [labeldata]="labeldata" [realdata]="realdata" [colordata]="colordata"></app-chart>
+                    </div>
+                </div>
+                <div class="flex flex-col border-2 rounded-lg sm:w-1/2 p-5 gap-5">
+                    <p class="flex text-2xl font-semibold">Overall Percentage</p>
+                    <div class="flex w-full h-full justify-center items-center">
+                        <div class="flex h-[15rem] w-[15rem] justify-center items-center rounded-full" [ngStyle]="getProgressCircleStyle(attendanceDetails?.averagePercentage)">
+                            <div class="flex h-[14rem] w-[14rem] justify-center items-center bg-secondary rounded-full">
+                                <p class="flex text-2xl font-bold">{{attendanceDetails?.averagePercentage}} %</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col border-2 rounded-lg p-5 shadow-lg gap-10">
+            <div class="flex justify-between">
+                <p class="flex text-3xl font-semibold">
+                    Subject List
+                </p>
+                <div class="flex gap-2">
+                    <button class="relative flex w-full justify-center rounded-md border bg-accent text-white py-2 px-4 text-sm font-medium hover:shadow-lg select-none" (click)="addNewSubject()">
+                        Add Subject
+                    </button>
+                </div>
+            </div>
+            <div class="flex overflow-y-auto">
+                <table class="table border-2 w-full text-xl">
+                    <tr class="border-2 bg-[#b9b9b9]">
+                        <th class="font-semibold min-w-32">Subject</th>
+                        <th class="font-semibold min-w-32">Present</th>
+                        <th class="font-semibold min-w-32">Absent</th>
+                        <th class="font-semibold min-w-32">Percentage</th>
+                        <th class="font-semibold min-w-32">Actions</th>
+                    </tr>
+                    <tr *ngFor="let subject of attendanceDetails?.subjectList" class="border-2 ">
+                        <td class="border-2 text-center px-4 py-5 font-semibold max-w-40 truncate" [title]="subject.name">{{subject.name}}</td>
+                        <td class="border-2 text-center px-4 py-5">
+                            <div class="flex w-full justify-center gap-4 items-center">
+                                <div class="flex border-2 rounded-lg justify-center items-center w-10 h-10 cursor-pointer hover:shadow-xl select-none" (click)="onAddPresent(subject,0)">-</div>
+                                <p class="flex font-semibold">{{subject.presentCount}}</p>
+                                <div class="flex border-2 rounded-lg justify-center items-center w-10 h-10 cursor-pointer hover:shadow-xl select-none" (click)="onAddPresent(subject,1)">+</div>
+                            </div>
+                        </td>
+                        <td class="border-2 text-center px-4 py-5">
+                            <div class="flex w-full justify-center gap-4 items-center">
+                                <div class="flex border-2 rounded-lg justify-center items-center w-10 h-10 cursor-pointer hover:shadow-xl select-none" (click)="onAddAbsent(subject,0)">-</div>
+                                <p class="flex font-semibold">{{subject.totalCount - subject.presentCount}}</p>
+                                <div class="flex border-2 rounded-lg justify-center items-center w-10 h-10 cursor-pointer hover:shadow-xl select-none" (click)="onAddAbsent(subject,1)">+</div>
+                            </div>
+                        </td>
+                        <td class="border-2 text-center px-4 py-5">{{subject.percentage | number:'2.2-2'}} %</td>
+                        <td class="border-2 text-center px-4 py-5">
+                            <div class="flex w-full justify-center gap-4 items-center">
+                                <img src="assets/edit-icon.svg" alt="Edit" class="flex h-6 w-6 cursor-pointer select-none" (click)="editSubject(subject)">
+                                <img src="assets/delete-icon.svg" alt="Edit" class="flex h-6 w-6 cursor-pointer select-none" (click)="deleteSubject(subject)">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="flex items-center justify-center fixed top-0 left-0 h-screen w-screen bg-[#00000093]" *ngIf="addSubject">
+    <div class="flex flex-col gap-4 bg-secondary rounded-xl p-5">
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+                <p class="flex text-2xl font-semibold">Subject</p>
+                <img src="assets/menu-close-black.svg" alt="Close" class="flex cursor-pointer" (click)="cancelAddSubject()">
+            </div>
+            <p class="flex text-sm">Edit or Add New Subject Details.</p>
+        </div>
+        <form class="flex flex-col gap-7" (submit)="createSubject($event)">
+            <div class="flex flex-row gap-3 w-full items-center justify-between">
+                <label for="subjectName" class="flex text-xl">Subject</label>
+                <input name="subjectName" type="text" id="subjectName" class="w-52 relative flex rounded-md border border-gray-300 px-3 py-2 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm" [(ngModel)]="subjectName">
+                
+            </div>
+            <div class="flex flex-row gap-3 w-full items-center justify-between">
+                <label for="presentCount" class="flex text-xl">Present Count</label>
+                <input name="presentCount" type="number" id="presentCount" class="w-52 relative flex rounded-md border border-gray-300 px-3 py-2 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm" [(ngModel)]="presentCount">
+            </div>
+            <div class="flex flex-row gap-3 w-full items-center justify-between">
+                <label for="absentCount" class="flex text-xl">Absent Count</label>
+                <input name="absentCount" type="number" id="absentCount" class="w-52 relative flex rounded-md border border-gray-300 px-3 py-2 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm" [(ngModel)]="absentCount">
+            </div>
+            <div class="flex">
+                <button type="submit" class="relative flex w-full justify-center rounded-md text-white bg-accent py-2 px-4 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 select-none">
+                    Add
+                </button> 
+            </div>
+        </form>
+    </div>
+</div>

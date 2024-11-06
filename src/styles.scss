@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'ngx-toastr/toastr';
+
+.app-container {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe Emoji", "EmojiFont";
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  user-select: none;
+}
